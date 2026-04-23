@@ -1,0 +1,7 @@
+[
+  {"Cellule":"B","Activité":"Réception MP","Réalisé":42,"Objectif":60,"Statut":"En cours"},
+  {"Cellule":"C","Activité":"Réception PF","Réalisé":85,"Objectif":80,"Statut":"OK"},
+  {"Cellule":"D","Activité":"Façonniers","Réalisé":12,"Objectif":25,"Statut":"Retard"},
+  {"Cellule":"E","Activité":"Retours","Réalisé":18,"Objectif":20,"Statut":"OK"},
+  {"Cellule":"F","Activité":"Expédition","Réalisé":55,"Objectif":70,"Statut":"En cours"}
+]
