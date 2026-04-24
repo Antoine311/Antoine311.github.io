@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>TEST 3 — JAVASCRIPT</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Arial,sans-serif;}
+  .card{background:#fff;width:800px;padding:80px;text-align:center;}
+  h1{font-size:64px;margin-bottom:40px;color:#000;}
+  .tag{display:inline-block;background:#eee;padding:8px 20px;border-radius:8px;font-size:22px;color:#888;margin-bottom:30px;letter-spacing:0.1em;}
+  .info{font-size:28px;color:#666;margin-top:40px;line-height:1.6;}
+
+  .box{font-size:48px;padding:40px;margin:30px 0;font-weight:bold;border:6px solid #999;}
+  .box-no{background:#fadbd8;color:#e74c3c;border-color:#e74c3c;}
+  .box-yes{background:#d5f5e3;color:#27ae60;border-color:#27ae60;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="tag">TEST 3 / 4</div>
+  <h1>JAVASCRIPT</h1>
+
+  <!-- Ce texte est visible par défaut. Si JS tourne, il sera remplacé. -->
+  <div id="jsTest" class="box box-no">JAVASCRIPT NE FONCTIONNE PAS</div>
+
+  <!-- Ce bloc est caché. JS le rendra visible. -->
+  <div id="jsGenerated" style="display:none;" class="box box-yes"></div>
+
+  <!-- Heure : affichée uniquement si JS tourne -->
+  <div id="jsTime" class="box" style="display:none;background:#eee;color:#333;border-color:#333;"></div>
+
+  <div class="info">
+    Rouge = JavaScript ne s'exécute pas<br/>
+    Vert = JavaScript fonctionne<br/><br/>
+    Si rouge : Power Automate devra générer<br/>
+    le HTML complet sans JavaScript
+  </div>
+</div>
+
+<script>
+  // Si ce script tourne, on remplace le message rouge par un vert
+  document.getElementById('jsTest').className = 'box box-yes';
+  document.getElementById('jsTest').textContent = 'JAVASCRIPT FONCTIONNE';
+
+  // On génère du contenu dynamiquement
+  var gen = document.getElementById('jsGenerated');
+  gen.style.display = 'block';
+  gen.textContent = 'CE TEXTE A ETE GENERE PAR JS';
+
+  // On affiche l'heure
+  var timeBox = document.getElementById('jsTime');
+  timeBox.style.display = 'block';
+  var now = new Date();
+  var h = String(now.getHours()).padStart(2,'0');
+  var m = String(now.getMinutes()).padStart(2,'0');
+  var s = String(now.getSeconds()).padStart(2,'0');
+  timeBox.textContent = 'HEURE DU SNAPSHOT : ' + h + ':' + m + ':' + s;
+</script>
+</body>
+</html>

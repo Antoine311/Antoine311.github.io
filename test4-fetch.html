@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>TEST 4 — FETCH</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Arial,sans-serif;}
+  .card{background:#fff;width:800px;padding:80px;text-align:center;}
+  h1{font-size:64px;margin-bottom:40px;color:#000;}
+  .tag{display:inline-block;background:#eee;padding:8px 20px;border-radius:8px;font-size:22px;color:#888;margin-bottom:30px;letter-spacing:0.1em;}
+  .info{font-size:28px;color:#666;margin-top:40px;line-height:1.6;}
+
+  .box{font-size:42px;padding:40px;margin:20px 0;font-weight:bold;border:6px solid #999;}
+  .box-no{background:#fadbd8;color:#e74c3c;border-color:#e74c3c;}
+  .box-yes{background:#d5f5e3;color:#27ae60;border-color:#27ae60;}
+  .box-wait{background:#fef9e7;color:#f39c12;border-color:#f39c12;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="tag">TEST 4 / 4</div>
+  <h1>FETCH DATA.JSON</h1>
+
+  <div id="fetchStatus" class="box box-wait">CHARGEMENT EN COURS...</div>
+  <div id="fetchResult" class="box" style="display:none;"></div>
+  <div id="fetchCount" class="box" style="display:none;background:#eee;color:#333;border-color:#333;"></div>
+
+  <div class="info">
+    Orange = en attente<br/>
+    Vert = fetch fonctionne, data.json chargé<br/>
+    Rouge = fetch échoué<br/><br/>
+    Si vert : la solution data.json séparé fonctionne<br/>
+    Si rouge + test 3 vert : il faut embarquer<br/>
+    les données dans le HTML
+  </div>
+</div>
+
+<script>
+  var status = document.getElementById('fetchStatus');
+  var result = document.getElementById('fetchResult');
+  var count = document.getElementById('fetchCount');
+
+  fetch('data.json?t=' + Date.now())
+    .then(function(resp) {
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      return resp.json();
+    })
+    .then(function(data) {
+      status.className = 'box box-yes';
+      status.textContent = 'FETCH OK — DATA.JSON CHARGE';
+
+      result.style.display = 'block';
+      result.className = 'box box-yes';
+      result.textContent = 'PREMIERE LIGNE : ' + JSON.stringify(data[0] || {}).substring(0, 60);
+
+      count.style.display = 'block';
+      count.textContent = data.length + ' LIGNES TROUVEES';
+    })
+    .catch(function(err) {
+      status.className = 'box box-no';
+      status.textContent = 'FETCH ECHOUE : ' + err.message;
+    });
+</script>
+</body>
+</html>
