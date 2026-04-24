@@ -1,12 +1,1 @@
-[
-  {"Slot":"01","OE":"201","Contrainte":"CORNIERE","Palettes":8},
-  {"Slot":"02","OE":"204","Contrainte":"PALBOX","Palettes":3},
-  {"Slot":"03","OE":"207","Contrainte":"CORNIERE","Palettes":12},
-  {"Slot":"04","OE":"212","Contrainte":"FILMAGE RENFORCE","Palettes":5},
-  {"Slot":"05","OE":"218","Contrainte":"PALBOX","Palettes":2},
-  {"Slot":"06","OE":"221","Contrainte":"CERCLAGE","Palettes":14},
-  {"Slot":"07","OE":"224","Contrainte":"CORNIERE + CERCLAGE","Palettes":6},
-  {"Slot":"08","OE":"","Contrainte":"","Palettes":""},
-  {"Slot":"09","OE":"","Contrainte":"","Palettes":""},
-  {"Slot":"10","OE":"","Contrainte":"","Palettes":""}
-]
+test
