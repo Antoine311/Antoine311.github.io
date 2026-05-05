@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="refresh" content="300">
+<title>Écran OE — Entrepôt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#000;
+    --paper:#fff;
+    --red:#d50000;
+    --rule:10px;
+    --rule-thin:4px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#1a1a1a;font-family:'JetBrains Mono', ui-monospace, Menlo, monospace;color:var(--ink);}
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;}
+
+  .stage{width:1080px;height:1920px;background:var(--paper);position:relative;overflow:hidden;transform-origin:center center;}
+  .grid{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(5,1fr);background:var(--ink);gap:var(--rule);padding:var(--rule);}
+
+  .cell{background:var(--paper);position:relative;display:flex;flex-direction:column;padding:20px 28px 24px;overflow:hidden;gap:8px;}
+  .cell__head{display:flex;align-items:center;justify-content:space-between;font-weight:800;color:var(--ink);}
+  .slot{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border:var(--rule-thin) solid var(--ink);font-size:38px;font-weight:800;letter-spacing:0;}
+  .pal-badge{display:inline-flex;align-items:baseline;gap:14px;border:var(--rule-thin) solid var(--ink);padding:10px 24px 14px;font-variant-numeric:tabular-nums;}
+  .pal-badge b{font-size:96px;font-weight:800;line-height:1;letter-spacing:-0.03em;}
+  .pal-badge span{font-size:34px;font-weight:700;letter-spacing:0.2em;}
+
+  .cell__number{font-weight:800;font-size:110px;line-height:1;letter-spacing:-0.03em;color:var(--red);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:center;flex:1 1 auto;display:flex;align-items:center;justify-content:center;min-height:0;}
+  .cell__number > span{display:inline-block;transform-origin:center center;}
+
+  .cell__constraint{flex:0 0 auto;background:var(--ink);color:var(--paper);font-weight:800;font-size:44px;letter-spacing:0.04em;padding:12px 14px 14px;text-align:center;white-space:nowrap;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:70px;}
+  .cell__constraint > span{display:inline-block;transform-origin:center center;}
+
+  .cell--empty{background:repeating-linear-gradient(-45deg,var(--paper) 0 26px,#ededed 26px 52px);display:flex;align-items:center;justify-content:center;padding:0;}
+  .cell--empty .empty-inner{background:var(--paper);border:var(--rule-thin) solid var(--ink);padding:18px 34px;font-weight:800;font-size:42px;letter-spacing:0.3em;}
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="grid" id="grid"></div>
+  </div>
+
+<script>
+  var TOTAL_SLOTS = 10;
+
+  async function load() {
+    var rows = [];
+    try {
+      var resp = await fetch('data.json?t=' + Date.now());
+      rows = await resp.json();
+    } catch (e) {
+      console.error('Erreur chargement data.json', e);
+    }
+
+    while (rows.length < TOTAL_SLOTS) {
+      rows.push({ Slot: String(rows.length + 1).padStart(2, '0'), OE: '', Contrainte: '', Palettes: '' });
+    }
+
+    var grid = document.getElementById('grid');
+    grid.innerHTML = '';
+
+    rows.slice(0, TOTAL_SLOTS).forEach(function(row, i) {
+      var cell = document.createElement('div');
+      var slot = row.Slot || String(i + 1).padStart(2, '0');
+      var oe = (row.OE != null ? String(row.OE) : '').trim();
+      var contrainte = (row.Contrainte != null ? String(row.Contrainte) : '').trim();
+      var pal = (row.Palettes != null ? String(row.Palettes) : '').trim();
+
+      if (!oe) {
+        cell.className = 'cell cell--empty';
+        cell.innerHTML = '<div class="empty-inner">\u2014 LIBRE \u2014</div>';
+      } else {
+        cell.className = 'cell';
+        cell.innerHTML =
+          '<div class="cell__head">' +
+            '<span class="slot">' + slot + '</span>' +
+            (pal ? '<span class="pal-badge"><b>' + pal + '</b><span>PAL</span></span>' : '') +
+          '</div>' +
+          '<div class="cell__number"><span>OE' + oe + '</span></div>' +
+          '<div class="cell__constraint"><span>' + (contrainte || '\u2014') + '</span></div>';
+      }
+      grid.appendChild(cell);
+    });
+
+    fitAll();
+  }
+
+  function fitText(outer, inner, maxPx, minPx) {
+    inner.style.transform = 'scale(1)';
+    var availableW = outer.clientWidth - 8;
+    var availableH = outer.clientHeight - 4;
+    var rect = inner.getBoundingClientRect();
+    if (!rect.width) return;
+    var scale = 1;
+    if (rect.width > availableW) scale = Math.min(scale, availableW / rect.width);
+    if (rect.height > availableH) scale = Math.min(scale, availableH / rect.height);
+    scale = Math.max(minPx / maxPx, scale);
+    if (scale < 1) inner.style.transform = 'scale(' + scale + ')';
+  }
+
+  function fitAll() {
+    document.querySelectorAll('.cell__number').forEach(function(el) {
+      var span = el.querySelector('span');
+      if (span) fitText(el, span, 110, 60);
+    });
+    document.querySelectorAll('.cell__constraint').forEach(function(el) {
+      var span = el.querySelector('span');
+      if (span) fitText(el, span, 44, 20);
+    });
+  }
+
+  function fit() {
+    var stage = document.getElementById('stage');
+    var s = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+    stage.style.transform = 'scale(' + s + ')';
+  }
+
+  fit();
+  window.addEventListener('resize', function() { fit(); fitAll(); });
+  load();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+  window.addEventListener('load', fitAll);
+</script>
+</body>
+</html>
